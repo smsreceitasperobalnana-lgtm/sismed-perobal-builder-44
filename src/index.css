@@ -1,0 +1,230 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* White background system with yellow accents */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+
+    /* Blue primary system */
+    --primary: 210 100% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Grayscale secondary */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 9%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Gray borders */
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 210 100% 45%;
+
+    --radius: 0.75rem;
+
+    /* Medical System Colors - Updated for new theme */
+    --medical-primary: 210 100% 45%; /* Blue primary */
+    --medical-secondary: 0 0% 85%; /* Light gray */
+    --medical-success: 120 100% 25%; /* Dark green */
+    --medical-warning: 45 100% 51%; /* Yellow accent */
+    --medical-danger: 0 84% 60%; /* Red */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-[Inter] antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-foreground;
+  }
+}
+
+@layer components {
+  /* Medical Cards - White with yellow borders */
+  .medical-card {
+    @apply bg-white text-foreground rounded-lg border-2 border-medical-warning shadow-sm p-6 transition-all duration-200 hover:shadow-md;
+  }
+
+  .medical-card-header {
+    @apply flex items-center justify-between pb-4 border-b border-medical-warning;
+  }
+
+  .medical-card-title {
+    @apply text-lg font-semibold text-foreground;
+  }
+
+  .medical-card-content {
+    @apply pt-4;
+  }
+
+  /* Stats Cards */
+  .stats-card {
+    @apply medical-card hover:scale-[1.02] cursor-pointer;
+  }
+
+  .stats-card-number {
+    @apply text-3xl font-bold text-medical-primary;
+  }
+
+  .stats-card-label {
+    @apply text-sm text-muted-foreground mt-1;
+  }
+
+  /* Navigation - Blue theme */
+  .medical-nav {
+    @apply bg-medical-primary text-primary-foreground;
+  }
+
+  .medical-nav-item {
+    @apply flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors hover:bg-white/10 rounded-md text-white;
+  }
+
+  .medical-nav-item.active {
+    @apply bg-white/20 text-white;
+  }
+
+  /* Forms */
+  .medical-form-group {
+    @apply space-y-2;
+  }
+
+  .medical-form-label {
+    @apply text-sm font-medium text-foreground;
+  }
+
+  /* Tables - White with yellow borders */
+  .medical-table {
+    @apply w-full border-collapse bg-white rounded-lg overflow-hidden shadow-sm border-2 border-medical-warning;
+  }
+
+  .medical-table th {
+    @apply bg-medical-primary text-white px-4 py-3 text-left text-sm font-semibold;
+  }
+
+  .medical-table td {
+    @apply px-4 py-3 text-sm border-b border-gray-200 hover:bg-gray-50;
+  }
+
+  /* Buttons Medical Variants */
+  .btn-medical-primary {
+    @apply bg-medical-primary hover:bg-blue-600 text-white border-2 border-medical-primary;
+  }
+
+  .btn-medical-success {
+    @apply bg-medical-success hover:bg-green-800 text-white border-2 border-medical-success;
+  }
+
+  .btn-medical-danger {
+    @apply bg-medical-danger hover:bg-red-600 text-white border-2 border-medical-danger;
+  }
+
+  .btn-medical-warning {
+    @apply bg-medical-warning hover:bg-yellow-500 text-black border-2 border-medical-warning;
+  }
+
+  /* Prescription Layout */
+  .prescription-layout {
+    @apply bg-white p-8 border-2 border-gray-400;
+  }
+
+  .prescription-header {
+    @apply border-b-2 border-medical-primary pb-4 mb-6;
+  }
+
+  .prescription-body {
+    @apply space-y-4;
+  }
+
+  .prescription-footer {
+    @apply mt-8 pt-4 border-t border-gray-300;
+  }
+
+  /* Print Styles */
+  @media print {
+    @page {
+      size: A4 landscape;
+      margin: 1cm;
+    }
+    
+    .prescription-container {
+      @apply flex gap-4;
+    }
+    
+    .prescription-via {
+      @apply flex-1 bg-white p-6 border-2 border-gray-400;
+    }
+  }
+
+  /* Loading States */
+  .loading {
+    @apply animate-pulse;
+  }
+
+  /* Success/Error States */
+  .success-state {
+    @apply text-medical-success border-medical-success;
+  }
+
+  .error-state {
+    @apply text-medical-danger border-medical-danger;
+  }
+
+  /* Professional Header */
+  .professional-header {
+    @apply bg-medical-primary text-white p-4 rounded-lg shadow-sm border-2 border-medical-warning;
+  }
+
+  /* Step Indicator */
+  .step-indicator {
+    @apply flex items-center justify-between mb-8;
+  }
+
+  .step-item {
+    @apply flex items-center gap-2;
+  }
+
+  .step-number {
+    @apply w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold border-2;
+  }
+
+  .step-number.active {
+    @apply bg-medical-primary text-white border-medical-primary;
+  }
+
+  .step-number.completed {
+    @apply bg-medical-success text-white border-medical-success;
+  }
+
+  .step-number.inactive {
+    @apply bg-gray-200 text-gray-600 border-gray-300;
+  }
+
+  /* Controlled medication badge */
+  .controlled-badge {
+    @apply bg-red-100 text-red-800 border border-red-300 px-2 py-1 rounded-full text-xs font-medium;
+  }
+}
