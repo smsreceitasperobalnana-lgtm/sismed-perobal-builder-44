@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, User, Pill, ArrowRight, ArrowLeft, Printer, History } from 'lucide-react';
+import { FileText, User, Pill, ArrowRight, ArrowLeft, Printer, History, FileCheck } from 'lucide-react';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { formatCNS } from '@/utils/cnsValidation';
 import { Patient, Medication, PrescriptionMedication, Prescription } from '@/types';
+import { AtestadoRapidoModal } from '@/components/AtestadoRapidoModal';
 
 const Receitas = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -21,6 +22,7 @@ const Receitas = () => {
   const [medicationPosologies, setMedicationPosologies] = useState<{[key: string]: string}>({});
   const [observations, setObservations] = useState('');
   const [professional, setProfessional] = useState<any>(null);
+  const [isAtestadoModalOpen, setIsAtestadoModalOpen] = useState(false);
 
   const [patients] = useLocalStorage<Patient[]>('sismed-patients', []);
   const [medications] = useLocalStorage<Medication[]>('sismed-medications', []);
@@ -62,6 +64,14 @@ const Receitas = () => {
       return;
     }
     setCurrentStep(2);
+  };
+
+  const openAtestadoModal = () => {
+    if (!selectedPatient) {
+      toast.error('Selecione um paciente primeiro');
+      return;
+    }
+    setIsAtestadoModalOpen(true);
   };
 
   const generatePrescriptions = () => {
@@ -663,6 +673,8 @@ const Receitas = () => {
     newWindow.document.close();
   };
 
+  const selectedPatientData = patients.find(p => p.id === selectedPatient);
+
   return (
     <Layout>
       <div className="space-y-6 animate-fade-in">
@@ -676,6 +688,18 @@ const Receitas = () => {
               Prescreva medicamentos e gere receituários múltiplos
             </p>
           </div>
+          
+          {/* Botão de Atalho para Atestado Rápido */}
+          {selectedPatient && (
+            <Button
+              onClick={openAtestadoModal}
+              variant="outline"
+              className="bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
+            >
+              <FileCheck className="h-4 w-4 mr-2" />
+              Atestado Rápido
+            </Button>
+          )}
         </div>
 
         {/* History Section */}
@@ -805,28 +829,43 @@ const Receitas = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {medications.map(medication => (
-                    <div key={medication.id} className="flex items-center space-x-3 p-3 border-2 border-medical-warning rounded-lg hover:bg-gray-50">
-                      <Checkbox
-                        id={medication.id}
-                        checked={selectedMedications.includes(medication.id)}
-                        onCheckedChange={() => handleMedicationToggle(medication.id)}
-                      />
-                      <div className="flex-1">
-                        <Label htmlFor={medication.id} className="font-medium cursor-pointer text-foreground">
-                          {medication.name} {medication.dosage}
-                        </Label>
-                        <p className="text-sm text-muted-foreground">
-                          {medication.presentation}
-                          {medication.isControlled && (
-                            <span className="ml-2 controlled-badge">
-                              CONTROLADO
-                            </span>
-                          )}
-                        </p>
+                  {medications.map(medication => {
+                    const isSelected = selectedMedications.includes(medication.id);
+
+                    return (
+                      <div
+                        key={medication.id}
+                        onClick={() => handleMedicationToggle(medication.id)}
+                        className={`
+                          flex items-center space-x-4 p-4 border-2 rounded-lg cursor-pointer transition-all duration-200
+                          ${isSelected
+                            ? 'bg-primary text-white border-blue-700 shadow-lg'
+                            : 'border-blue-200 text-foreground hover:bg-dark hover:text-white hover:border-dark'
+                          }
+                        `}
+                      >
+                        <Checkbox
+                          id={medication.id}
+                          checked={isSelected}
+                          readOnly
+                          className="pointer-events-none"
+                        />
+                        <div className="flex-1">
+                          <span className="font-semibold text-base">
+                            {medication.name} {medication.dosage}
+                          </span>
+                          <p className={`text-sm ${isSelected ? 'text-blue-100' : 'text-muted-foreground'}`}>
+                            {medication.presentation}
+                            {medication.isControlled && (
+                              <span className="ml-2 bg-red-100 text-red-800 text-xs font-bold px-2.5 py-0.5 rounded-full">
+                                CONTROLADO
+                              </span>
+                            )}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="flex justify-end mt-6">
@@ -906,6 +945,14 @@ const Receitas = () => {
             </Card>
           </div>
         )}
+
+        {/* Modal do Atestado Rápido */}
+        <AtestadoRapidoModal
+          isOpen={isAtestadoModalOpen}
+          onClose={() => setIsAtestadoModalOpen(false)}
+          paciente={selectedPatientData || null}
+          profissional={professional}
+        />
       </div>
     </Layout>
   );
