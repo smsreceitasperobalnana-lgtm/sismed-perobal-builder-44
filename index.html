@@ -1,27 +1,87 @@
 
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SISMED Perobal v4.0</title>
-    <meta name="description" content="Sistema de Saúde Municipal - Perobal v4.0" />
-    <meta name="author" content="SISMED" />
-
-    <meta property="og:title" content="SISMED Perobal v4.0" />
-    <meta property="og:description" content="Sistema de Saúde Municipal - Perobal v4.0" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
-
-  <body>
-
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISMED Perobal</title>
+    <style>
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: opacity 0.5s ease-out;
+        }
+        .loader-container { text-align: center; max-width: 800px; width: 100%; }
+        .loader-logo h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 10px; background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .loader-logo p { color: #94a3b8; font-size: 1.1rem; }
+        .loading-section { background: rgba(30, 41, 59, 0.8); border-radius: 16px; padding: 30px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); backdrop-filter: blur(10px); margin-bottom: 40px; }
+        .spinner { animation: spin 1.5s linear infinite; width: 60px; height: 60px; margin: 20px auto; }
+        .spinner circle { stroke: #0ea5e9; stroke-width: 4; stroke-linecap: round; }
+        .spinner path { fill: #0ea5e9; }
+        .loading-text { font-size: 1.2rem; color: #cbd5e1; margin: 20px 0; font-weight: 500; }
+        .progress-container { width: 100%; height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin: 30px 0; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #0ea5e9, #38bdf8); border-radius: 4px; transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="loader">
+        <div class="loader-container">
+            <div class="loader-logo">
+                <h1>SISMED Perobal</h1>
+                <p>Sistema Integrado de Saúde</p>
+            </div>
+            <div class="loading-section">
+                <h2>Carregando Sistema</h2>
+                <svg class="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <div class="loading-text">Inicializando módulos de segurança...</div>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+                <div class="loading-status">0% concluído</div>
+            </div>
+        </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script src="/public/assets/js/app.js"></script>
-  </body>
+    
+    <script>
+        const loadingTexts = ["Carregando base de dados...","Verificando atualizações...","Preparando interface do usuário...","Carregando módulo de receitas...","Quase pronto...","Sistema pronto! Iniciando..."];
+        let currentIndex = 0;
+        const textElement = document.querySelector('.loading-text');
+        const progressElement = document.querySelector('.progress-bar');
+        const statusElement = document.querySelector('.loading-status');
+        
+        function updateLoading() {
+            const currentWidth = parseInt(progressElement.style.width || "0%");
+            if (currentWidth >= 100) return;
+            textElement.textContent = loadingTexts[currentIndex];
+            const newWidth = Math.min(100, currentWidth + 17);
+            progressElement.style.width = `${newWidth}%`;
+            statusElement.textContent = `${newWidth}% concluído`;
+            currentIndex = (currentIndex + 1) % loadingTexts.length;
+            if (newWidth < 100) { setTimeout(updateLoading, 800); }
+            else { 
+                setTimeout(() => {
+                    const loader = document.getElementById('loader');
+                    if (loader) { loader.style.opacity = '0'; setTimeout(() => loader.remove(), 500); }
+                }, 1000);
+            }
+        }
+        updateLoading();
+    </script>
+</body>
 </html>

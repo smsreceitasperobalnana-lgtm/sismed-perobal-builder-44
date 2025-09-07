@@ -14,6 +14,7 @@ import { Patient, MedicalCertificate } from '@/types';
 
 const Atestados = () => {
   const [selectedPatient, setSelectedPatient] = useState('');
+  const [manualPatientName, setManualPatientName] = useState('');
   const [daysOff, setDaysOff] = useState('1');
   const [startDate, setStartDate] = useState('');
   const [reason, setReason] = useState('');
@@ -45,8 +46,8 @@ const Atestados = () => {
   };
 
   const generateCertificate = () => {
-    if (!selectedPatient) {
-      toast.error('Selecione um paciente');
+    if (!selectedPatient && !manualPatientName.trim()) {
+      toast.error('Selecione um paciente cadastrado ou digite o nome do paciente');
       return;
     }
     if (!startDate) {
@@ -387,13 +388,26 @@ const Atestados = () => {
                 <div className="medical-form-group">
                   <Label className="medical-form-label">Nome do Paciente</Label>
                   <Input
+                    value={manualPatientName}
+                    onChange={(e) => {
+                      setManualPatientName(e.target.value);
+                      if (e.target.value.trim()) setSelectedPatient('');
+                    }}
                     placeholder="Digite o nome do paciente..."
                     className={borderClass}
+                    disabled={!!selectedPatient}
                   />
                 </div>
                 <div className="medical-form-group">
                   <Label className="medical-form-label">Paciente Cadastrado</Label>
-                  <Select value={selectedPatient} onValueChange={setSelectedPatient}>
+                  <Select 
+                    value={selectedPatient} 
+                    onValueChange={(value) => {
+                      setSelectedPatient(value);
+                      if (value) setManualPatientName('');
+                    }}
+                    disabled={!!manualPatientName.trim()}
+                  >
                     <SelectTrigger className={borderClass}>
                       <SelectValue placeholder="Ou selecione um paciente cadastrado" />
                     </SelectTrigger>
