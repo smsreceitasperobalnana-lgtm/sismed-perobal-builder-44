@@ -8,27 +8,10 @@ export const validateCNS = (cns: string): boolean => {
     return false;
   }
   
-  // Basic CNS validation algorithm (simplified)
-  const weights1 = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
-  const weights2 = [3, 2, 1, 0, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 9];
-  
-  let sum = 0;
-  for (let i = 0; i < 15; i++) {
-    sum += parseInt(cleanCNS[i]) * weights1[i];
-  }
-  
-  let remainder = sum % 11;
-  let dv = remainder < 2 ? 0 : 11 - remainder;
-  
-  if (dv !== parseInt(cleanCNS[14])) {
-    // Try alternative calculation
-    sum = 0;
-    for (let i = 0; i < 15; i++) {
-      sum += parseInt(cleanCNS[i]) * weights2[i];
-    }
-    remainder = sum % 11;
-    dv = remainder < 2 ? 0 : 11 - remainder;
-    return dv === parseInt(cleanCNS[14]);
+  // Check if it's not all repeated numbers (like 111111111111111)
+  const allSameDigit = /^(\d)\1{14}$/.test(cleanCNS);
+  if (allSameDigit) {
+    return false;
   }
   
   return true;

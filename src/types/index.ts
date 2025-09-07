@@ -19,6 +19,7 @@ export interface Medication {
 export interface PrescriptionMedication {
   medication: Medication;
   posology: string;
+  quantity: string;
 }
 
 export interface Prescription {

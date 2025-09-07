@@ -386,20 +386,29 @@ const Comparecimentos = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="medical-form-group">
-                <Label className="medical-form-label">Paciente *</Label>
-                <Select value={selectedPatient} onValueChange={setSelectedPatient}>
-                  <SelectTrigger className={borderClass}>
-                    <SelectValue placeholder="Selecione o paciente" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {patients.map(patient => (
-                      <SelectItem key={patient.id} value={patient.id}>
-                        {patient.name} - {formatCNS(patient.cns)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="space-y-4">
+                <div className="medical-form-group">
+                  <Label className="medical-form-label">Nome do Paciente</Label>
+                  <Input
+                    placeholder="Digite o nome do paciente..."
+                    className={borderClass}
+                  />
+                </div>
+                <div className="medical-form-group">
+                  <Label className="medical-form-label">Paciente Cadastrado</Label>
+                  <Select value={selectedPatient} onValueChange={setSelectedPatient}>
+                    <SelectTrigger className={borderClass}>
+                      <SelectValue placeholder="Ou selecione um paciente cadastrado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {patients.map(patient => (
+                        <SelectItem key={patient.id} value={patient.id}>
+                          {patient.name} - {formatCNS(patient.cns)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </CardContent>
           </Card>

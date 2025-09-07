@@ -20,6 +20,7 @@ const Receitas = () => {
   const [prescriptionMonths, setPrescriptionMonths] = useState('1');
   const [selectedMedications, setSelectedMedications] = useState<string[]>([]);
   const [medicationPosologies, setMedicationPosologies] = useState<{[key: string]: string}>({});
+  const [medicationQuantities, setMedicationQuantities] = useState<{[key: string]: string}>({});
   const [observations, setObservations] = useState('');
   const [professional, setProfessional] = useState<any>(null);
   const [isAtestadoModalOpen, setIsAtestadoModalOpen] = useState(false);
@@ -51,6 +52,13 @@ const Receitas = () => {
     setMedicationPosologies(prev => ({
       ...prev,
       [medicationId]: posology
+    }));
+  };
+
+  const handleQuantityChange = (medicationId: string, quantity: string) => {
+    setMedicationQuantities(prev => ({
+      ...prev,
+      [medicationId]: quantity
     }));
   };
 
@@ -91,7 +99,8 @@ const Receitas = () => {
     const patient = patients.find(p => p.id === selectedPatient)!;
     const prescriptionMeds: PrescriptionMedication[] = selectedMedications.map(id => ({
       medication: medications.find(m => m.id === id)!,
-      posology: medicationPosologies[id] || 'Conforme orientação médica'
+      posology: medicationPosologies[id] || 'Conforme orientação médica',
+      quantity: medicationQuantities[id] || '01'
     }));
 
     const monthsNum = parseInt(prescriptionMonths);
@@ -129,6 +138,7 @@ const Receitas = () => {
     setSelectedPatient('');
     setSelectedMedications([]);
     setMedicationPosologies({});
+    setMedicationQuantities({});
     setObservations('');
   };
 
@@ -226,13 +236,16 @@ const Receitas = () => {
         <div class="medications">
           <strong>Medicamentos Prescritos:</strong>
           ${(pageNum ? medicationPages[pageNum - 1] : medications).map(item => `
-            <div class="medication-item">
-              <div class="medication-name">
-                ${item.medication.name} ${item.medication.dosage} - ${item.medication.presentation}
-                ${item.medication.isControlled ? '<span class="controlled-badge">CONTROLADO</span>' : ''}
-              </div>
-              <div class="medication-posology">${item.posology}</div>
-            </div>
+             <div class="medication-item">
+               <div class="medication-header">
+                 <div class="medication-name">
+                   ${item.medication.name} ${item.medication.dosage} - ${item.medication.presentation}
+                   ${item.medication.isControlled ? '<span class="controlled-badge">CONTROLADO</span>' : ''}
+                 </div>
+                 <div class="medication-quantity">Qtd: ${item.quantity}</div>
+               </div>
+               <div class="medication-posology">${item.posology}</div>
+             </div>
           `).join('')}
         </div>
 
@@ -847,7 +860,6 @@ const Receitas = () => {
                         <Checkbox
                           id={medication.id}
                           checked={isSelected}
-                          readOnly
                           className="pointer-events-none"
                         />
                         <div className="flex-1">
@@ -901,17 +913,29 @@ const Receitas = () => {
                           </span>
                         )}
                       </div>
-                      <div className="medical-form-group">
-                        <Label className="medical-form-label">
-                          Posologia {medication.isControlled ? '*' : ''}
-                        </Label>
-                        <Input
-                          value={medicationPosologies[medicationId] || ''}
-                          onChange={(e) => handlePosologyChange(medicationId, e.target.value)}
-                          placeholder="Ex: 1 comprimido de 8 em 8 horas por 7 dias"
-                          className="border-2 border-medical-warning"
-                          required={medication.isControlled}
-                        />
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="medical-form-group">
+                          <Label className="medical-form-label">Quantidade *</Label>
+                          <Input
+                            value={medicationQuantities[medicationId] || ''}
+                            onChange={(e) => handleQuantityChange(medicationId, e.target.value)}
+                            placeholder="Ex: 30"
+                            className="border-2 border-medical-warning"
+                            required
+                          />
+                        </div>
+                        <div className="medical-form-group md:col-span-3">
+                          <Label className="medical-form-label">
+                            Posologia {medication.isControlled ? '*' : ''}
+                          </Label>
+                          <Input
+                            value={medicationPosologies[medicationId] || ''}
+                            onChange={(e) => handlePosologyChange(medicationId, e.target.value)}
+                            placeholder="Ex: 1 comprimido de 8 em 8 horas por 7 dias"
+                            className="border-2 border-medical-warning"
+                            required={medication.isControlled}
+                          />
+                        </div>
                       </div>
                     </div>
                   );
